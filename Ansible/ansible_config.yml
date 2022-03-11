@@ -1,0 +1,33 @@
+---
+  - name: Configure web vm with Docker
+    hosts: webservers
+    become: true
+    tasks:
+    
+    - name: Install docker.io  (state=present is optional)
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Install PIP3  (state=present is optional)
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install docker python module  (state=present is optional)
+      pip:
+        name: docker
+        state: present
+
+    - name: Launch DVWA
+      docker-container:
+        name: dvwa
+        image cyberxsecurity/dvwa
+        state: started
+        restart_policy: always
+        published_ports: 80:80
+
+    - name: Enable Docker Service
+      systemd:
+        name: docker
+        enabled: yes
